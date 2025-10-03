@@ -40,7 +40,9 @@ const prompt = ai.definePrompt({
   output: {schema: GenerateDraftContentOutputSchema},
   prompt: `You are an AI assistant helping a ward leader generate content.
 
-  You will generate a draft for the ward leader based on the provided information, based on content type.  The content should be appropriate for the target audience.
+  You will generate a draft for the ward leader based on the provided information, based on content type. The content should be appropriate for the target audience.
+  
+  IMPORTANT: The output must be well-formatted. Use newlines (\n) to separate paragraphs, headings, and list items to ensure the content is easy to read.
 
   Content Type: {{{contentType}}}
   Topic: {{{topic}}}
