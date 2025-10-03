@@ -126,7 +126,7 @@ export default function FeedbackPage() {
                     {suggestion && (
                         <div className="text-sm bg-background text-foreground p-4 rounded-md border">
                             <ul className="list-disc list-inside space-y-2">
-                                {suggestion.split('\n').map((line, index) => {
+                                {suggestion.split(/\n- | - /).map((line, index) => {
                                     const cleanedLine = line.replace(/^- /, '');
                                     return cleanedLine.trim() && <li key={index}>{cleanedLine}</li>;
                                 })}
