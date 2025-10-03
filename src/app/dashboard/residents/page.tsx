@@ -6,6 +6,8 @@ import { MoreHorizontal, PlusCircle } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { AddResidentDialog } from '@/components/add-resident-dialog';
+import { format } from 'date-fns';
 
 export default function ResidentsPage() {
   return (
@@ -20,19 +22,21 @@ export default function ResidentsPage() {
             <CardTitle>Danh sách Cư dân</CardTitle>
             <CardDescription>Hiện có {mockResidents.length} cư dân trong khu phố.</CardDescription>
           </div>
-          <Button>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Thêm Cư dân
-          </Button>
+          <AddResidentDialog>
+            <Button>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Thêm Cư dân
+            </Button>
+          </AddResidentDialog>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Tên</TableHead>
+                <TableHead className="hidden sm:table-cell">Ngày sinh</TableHead>
                 <TableHead className="hidden lg:table-cell">Địa chỉ</TableHead>
                 <TableHead className="hidden md:table-cell">Số điện thoại</TableHead>
-                <TableHead className="hidden lg:table-cell">Email</TableHead>
                 <TableHead>Vai trò</TableHead>
                 <TableHead>Cư trú</TableHead>
                 <TableHead>
@@ -52,9 +56,9 @@ export default function ResidentsPage() {
                       <div className="font-medium">{resident.name}</div>
                     </div>
                   </TableCell>
+                  <TableCell className="hidden sm:table-cell">{format(new Date(resident.dob), 'dd/MM/yyyy')}</TableCell>
                   <TableCell className="hidden lg:table-cell">{resident.address}</TableCell>
                   <TableCell className="hidden md:table-cell">{resident.phone}</TableCell>
-                  <TableCell className="hidden lg:table-cell">{resident.email}</TableCell>
                   <TableCell>
                      <Badge variant={resident.relationship === 'Chủ hộ' ? 'default' : 'secondary'}>
                         {resident.relationship}

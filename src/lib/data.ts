@@ -7,11 +7,11 @@ export const mockUser: User = {
 };
 
 export const mockResidents: Resident[] = [
-  { id: 'RES001', name: 'Nguyễn Văn An', address: '123 Đường ABC, Phường 1', relationship: 'Chủ hộ', phone: '0901234567', email: 'an.nguyen@email.com', residenceType: 'Thường trú', joinedDate: '2022-01-15', avatarUrl: 'https://picsum.photos/seed/1/40/40' },
-  { id: 'RES002', name: 'Trần Thị Bình', address: '456 Đường XYZ, Phường 2', relationship: 'Chủ hộ', phone: '0912345678', email: 'binh.tran@email.com', residenceType: 'Tạm trú', joinedDate: '2021-11-20', avatarUrl: 'https://picsum.photos/seed/2/40/40' },
-  { id: 'RES003', name: 'Lê Văn Cường', address: '789 Đường LMN, Phường 1', relationship: 'Thành viên', phone: '0987654321', email: 'cuong.le@email.com', residenceType: 'Thường trú', joinedDate: '2023-03-10', avatarUrl: 'https://picsum.photos/seed/3/40/40' },
-  { id: 'RES004', name: 'Phạm Thị Dung', address: '101 Đường PQR, Phường 3', relationship: 'Chủ hộ', phone: '0934567890', email: 'dung.pham@email.com', residenceType: 'Thường trú', joinedDate: '2020-07-22', avatarUrl: 'https://picsum.photos/seed/4/40/40' },
-  { id: 'RES005', name: 'Hoàng Văn Em', address: '212 Đường STU, Phường 2', relationship: 'Thành viên', phone: '0945678901', email: 'em.hoang@email.com', residenceType: 'Tạm trú', joinedDate: '2022-08-30', avatarUrl: 'https://picsum.photos/seed/5/40/40' },
+  { id: 'RES001', name: 'Nguyễn Văn An', dob: '1985-05-20', address: '123 Đường ABC, Phường 1', relationship: 'Chủ hộ', phone: '0901234567', email: 'an.nguyen@email.com', residenceType: 'Thường trú', joinedDate: '2022-01-15', avatarUrl: 'https://picsum.photos/seed/1/40/40' },
+  { id: 'RES002', name: 'Trần Thị Bình', dob: '1990-11-15', address: '456 Đường XYZ, Phường 2', relationship: 'Chủ hộ', phone: '0912345678', email: 'binh.tran@email.com', residenceType: 'Tạm trú', joinedDate: '2021-11-20', avatarUrl: 'https://picsum.photos/seed/2/40/40' },
+  { id: 'RES003', name: 'Lê Văn Cường', dob: '2001-02-28', address: '789 Đường LMN, Phường 1', relationship: 'Thành viên', phone: '0987654321', email: 'cuong.le@email.com', residenceType: 'Thường trú', joinedDate: '2023-03-10', avatarUrl: 'https://picsum.photos/seed/3/40/40' },
+  { id: 'RES004', name: 'Phạm Thị Dung', dob: '1978-09-10', address: '101 Đường PQR, Phường 3', relationship: 'Chủ hộ', phone: '0934567890', email: 'dung.pham@email.com', residenceType: 'Thường trú', joinedDate: '2020-07-22', avatarUrl: 'https://picsum.photos/seed/4/40/40' },
+  { id: 'RES005', name: 'Hoàng Văn Em', dob: '1995-12-01', address: '212 Đường STU, Phường 2', relationship: 'Thành viên', phone: '0945678901', email: 'em.hoang@email.com', residenceType: 'Tạm trú', joinedDate: '2022-08-30', avatarUrl: 'https://picsum.photos/seed/5/40/40' },
 ];
 
 export const mockEvents: Event[] = [

@@ -1,6 +1,7 @@
 export type Resident = {
   id: string;
   name: string;
+  dob: string; // Date of Birth
   address: string;
   relationship: 'Chủ hộ' | 'Thành viên';
   phone: string;
