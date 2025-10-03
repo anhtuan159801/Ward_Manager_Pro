@@ -72,6 +72,7 @@ const prompt = ai.definePrompt({
   - Thiếu nhi: Dưới 15 tuổi
   - Vị thành niên: Từ 15 đến 17 tuổi
   - Thanh niên: Từ 18 đến 35 tuổi
+  - Độ tuổi nghĩa vụ quân sự: Từ 18 đến 27 tuổi
   - Người cao tuổi: Từ 60 tuổi trở lên
 
   Hãy trả lời một cách ngắn gọn, chính xác và chuyên nghiệp bằng tiếng Việt.

@@ -25,7 +25,7 @@ const getAge = (dob: string) => {
   return age;
 };
 
-type AgeGroup = 'children' | 'adolescents' | 'youth' | 'elderly';
+type AgeGroup = 'children' | 'adolescents' | 'youth' | 'militaryService' | 'elderly';
 type ResidenceType = 'Thường trú' | 'Tạm trú';
 
 interface SelectedGroup {
@@ -44,6 +44,7 @@ export default function DashboardPage() {
     children: residents.filter(r => getAge(r.dob) < 15),
     adolescents: residents.filter(r => getAge(r.dob) >= 15 && getAge(r.dob) <= 17),
     youth: residents.filter(r => getAge(r.dob) >= 18 && getAge(r.dob) <= 35),
+    militaryService: residents.filter(r => getAge(r.dob) >= 18 && getAge(r.dob) <= 27),
     elderly: residents.filter(r => getAge(r.dob) >= 60),
   });
 
@@ -54,6 +55,7 @@ export default function DashboardPage() {
     children: { title: "Thiếu nhi (dưới 15)", icon: <Baby className="h-4 w-4 text-muted-foreground" /> },
     adolescents: { title: "Vị thành niên (15-17)", icon: <GraduationCap className="h-4 w-4 text-muted-foreground" /> },
     youth: { title: "Thanh niên (18-35)", icon: <PersonStanding className="h-4 w-4 text-muted-foreground" /> },
+    militaryService: { title: "Độ tuổi nghĩa vụ (18-27)", icon: <Shield className="h-4 w-4 text-muted-foreground" /> },
     elderly: { title: "Người cao tuổi (60+)", icon: <Home className="h-4 w-4 text-muted-foreground" /> },
   };
   
@@ -246,7 +248,7 @@ export default function DashboardPage() {
         <div>
             <h2 className="text-2xl font-bold tracking-tight font-headline mb-1">Thống kê Nhân khẩu Thường trú</h2>
             <p className="text-sm text-muted-foreground">Phân loại dân số theo độ tuổi cho các cư dân thường trú.</p>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5 mt-4">
                 {renderAgeGroupCards(permanentAgeGroups, "Thường trú")}
             </div>
         </div>
@@ -254,7 +256,7 @@ export default function DashboardPage() {
          <div>
             <h2 className="text-2xl font-bold tracking-tight font-headline mb-1">Thống kê Nhân khẩu Tạm trú</h2>
             <p className="text-sm text-muted-foreground">Phân loại dân số theo độ tuổi cho các cư dân tạm trú.</p>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5 mt-4">
                 {renderAgeGroupCards(temporaryAgeGroups, "Tạm trú")}
             </div>
         </div>
