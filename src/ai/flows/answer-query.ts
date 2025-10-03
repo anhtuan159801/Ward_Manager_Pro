@@ -67,6 +67,13 @@ const prompt = ai.definePrompt({
   tools: [getResidentsTool, getEventsTool, getFeedbackTool],
   prompt: `Bạn là một trợ lý AI thông minh cho tổ trưởng khu phố. Nhiệm vụ của bạn là trả lời các câu hỏi của tổ trưởng dựa trên dữ liệu có sẵn trong hệ thống.
   Sử dụng các công cụ được cung cấp để truy xuất thông tin cần thiết.
+
+  Các định nghĩa nhóm tuổi trong hệ thống:
+  - Thiếu nhi: Dưới 15 tuổi
+  - Vị thành niên: Từ 15 đến 17 tuổi
+  - Thanh niên: Từ 18 đến 35 tuổi
+  - Người cao tuổi: Từ 60 tuổi trở lên
+
   Hãy trả lời một cách ngắn gọn, chính xác và chuyên nghiệp bằng tiếng Việt.
   Dựa vào thông tin bạn có, hãy trả lời câu hỏi sau: "{{{query}}}"
   `,
