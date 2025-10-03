@@ -15,7 +15,7 @@ import { mockResidents, mockEvents, mockFeedbacks } from '@/lib/data';
 const getResidentsTool = ai.defineTool(
   {
     name: 'getResidents',
-    description: 'Lấy danh sách tất cả cư dân trong hệ thống.',
+    description: 'Lấy danh sách tất cả cư dân trong hệ thống. Dữ liệu này bao gồm ngày sinh (dob) để có thể tính tuổi.',
     outputSchema: z.any(),
   },
   async () => {
