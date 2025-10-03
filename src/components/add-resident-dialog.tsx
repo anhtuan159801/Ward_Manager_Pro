@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -22,11 +22,31 @@ import { Calendar } from './ui/calendar';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import type { Resident } from '@/lib/types';
 
-export function AddResidentDialog({ children }: { children: ReactNode }) {
+
+type AddResidentDialogProps = {
+  children?: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  residentToEdit?: Resident;
+};
+
+export function AddResidentDialog({ children, open, onOpenChange, residentToEdit }: AddResidentDialogProps) {
   const [file, setFile] = useState<File | null>(null);
-  const [date, setDate] = useState<Date>();
+  const [date, setDate] = useState<Date | undefined>(
+      residentToEdit ? new Date(residentToEdit.dob) : undefined
+  );
   const { toast } = useToast();
+  
+  useEffect(() => {
+    if (residentToEdit) {
+      setDate(new Date(residentToEdit.dob));
+      // You can set other form fields here as well
+    } else {
+      setDate(undefined);
+    }
+  }, [residentToEdit]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -51,14 +71,18 @@ export function AddResidentDialog({ children }: { children: ReactNode }) {
   const handleRemoveFile = () => {
     setFile(null);
   };
+  
+  const dialogTitle = residentToEdit ? 'Chỉnh sửa Cư dân' : 'Thêm Cư dân';
+  const dialogDescription = residentToEdit ? 'Chỉnh sửa thông tin chi tiết của cư dân.' : 'Chọn phương thức nhập liệu phù hợp.';
+
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      {children && <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>Thêm Cư dân</DialogTitle>
-          <DialogDescription>Chọn phương thức nhập liệu phù hợp.</DialogDescription>
+          <DialogTitle>{dialogTitle}</DialogTitle>
+          <DialogDescription>{dialogDescription}</DialogDescription>
         </DialogHeader>
         <Tabs defaultValue="manual" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
@@ -71,7 +95,7 @@ export function AddResidentDialog({ children }: { children: ReactNode }) {
                 <Label htmlFor="name" className="text-right">
                   Họ và tên
                 </Label>
-                <Input id="name" className="col-span-3" />
+                <Input id="name" defaultValue={residentToEdit?.name} className="col-span-3" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-right">Ngày sinh</Label>
@@ -97,41 +121,41 @@ export function AddResidentDialog({ children }: { children: ReactNode }) {
                 <Label htmlFor="address" className="text-right">
                   Địa chỉ
                 </Label>
-                <Input id="address" className="col-span-3" />
+                <Input id="address" defaultValue={residentToEdit?.address} className="col-span-3" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="phone" className="text-right">
                   Số điện thoại
                 </Label>
-                <Input id="phone" className="col-span-3" />
+                <Input id="phone" defaultValue={residentToEdit?.phone} className="col-span-3" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="email" className="text-right">
                   Email
                 </Label>
-                <Input id="email" type="email" className="col-span-3" />
+                <Input id="email" type="email" defaultValue={residentToEdit?.email} className="col-span-3" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-right">Quan hệ</Label>
-                <Select>
+                <Select defaultValue={residentToEdit?.relationship}>
                   <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Chọn quan hệ" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="owner">Chủ hộ</SelectItem>
-                    <SelectItem value="member">Thành viên</SelectItem>
+                    <SelectItem value="Chủ hộ">Chủ hộ</SelectItem>
+                    <SelectItem value="Thành viên">Thành viên</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-right">Cư trú</Label>
-                <Select>
+                <Select defaultValue={residentToEdit?.residenceType}>
                   <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Chọn loại cư trú" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="permanent">Thường trú</SelectItem>
-                    <SelectItem value="temporary">Tạm trú</SelectItem>
+                    <SelectItem value="Thường trú">Thường trú</SelectItem>
+                    <SelectItem value="Tạm trú">Tạm trú</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

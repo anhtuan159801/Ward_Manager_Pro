@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -8,8 +11,52 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { AddResidentDialog } from '@/components/add-resident-dialog';
 import { format } from 'date-fns';
+import type { Resident } from '@/lib/types';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export default function ResidentsPage() {
+  const [residents, setResidents] = useState<Resident[]>(mockResidents);
+  const [residentToEdit, setResidentToEdit] = useState<Resident | undefined>(undefined);
+  const [residentToDelete, setResidentToDelete] = useState<Resident | null>(null);
+  const [isAddDialogOpen, setAddDialogOpen] = useState(false);
+  const [isConfirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = useState(false);
+
+
+  const handleEdit = (resident: Resident) => {
+    setResidentToEdit(resident);
+    setAddDialogOpen(true);
+  };
+  
+  const handleDeleteConfirm = (resident: Resident) => {
+    setResidentToDelete(resident);
+    setConfirmDeleteDialogOpen(true);
+  };
+
+  const handleDelete = () => {
+    if (residentToDelete) {
+      setResidents(residents.filter(r => r.id !== residentToDelete.id));
+      setResidentToDelete(null);
+      setConfirmDeleteDialogOpen(false);
+    }
+  };
+  
+  const handleDialogClose = (open: boolean) => {
+    setAddDialogOpen(open);
+    if (!open) {
+        setResidentToEdit(undefined);
+    }
+  }
+
+
   return (
     <div className="flex flex-col gap-8">
       <div>
@@ -20,10 +67,14 @@ export default function ResidentsPage() {
         <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <CardTitle>Danh sách Cư dân</CardTitle>
-            <CardDescription>Hiện có {mockResidents.length} cư dân trong khu phố.</CardDescription>
+            <CardDescription>Hiện có {residents.length} cư dân trong khu phố.</CardDescription>
           </div>
-          <AddResidentDialog>
-            <Button>
+          <AddResidentDialog 
+            open={isAddDialogOpen} 
+            onOpenChange={handleDialogClose}
+            residentToEdit={residentToEdit}
+          >
+            <Button onClick={() => setAddDialogOpen(true)}>
               <PlusCircle className="mr-2 h-4 w-4" />
               Thêm Cư dân
             </Button>
@@ -45,7 +96,7 @@ export default function ResidentsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockResidents.map((resident) => (
+              {residents.map((resident) => (
                 <TableRow key={resident.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
@@ -78,8 +129,8 @@ export default function ResidentsPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Sửa</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">Xóa</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleEdit(resident)}>Sửa</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive" onClick={() => handleDeleteConfirm(resident)}>Xóa</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -89,6 +140,22 @@ export default function ResidentsPage() {
           </Table>
         </CardContent>
       </Card>
+       <AlertDialog open={isConfirmDeleteDialogOpen} onOpenChange={setConfirmDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Bạn có chắc chắn muốn xóa?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Hành động này không thể được hoàn tác. Thao tác này sẽ xóa vĩnh viễn cư dân
+              <span className="font-bold"> {residentToDelete?.name} </span>
+              khỏi hệ thống.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>Xóa</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
