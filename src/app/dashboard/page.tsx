@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Users, Calendar, MessageSquare, Home, Briefcase, User, Users2, Activity, Shield, PersonStanding, Baby, GraduationCap, Building } from "lucide-react";
+import { Users, Calendar, MessageSquare, Home, Briefcase, User, Users2, Activity, Shield, PersonStanding, Baby, GraduationCap, Building, FileDown } from "lucide-react";
 import { mockResidents } from "@/lib/data";
 import { mockEvents, mockFeedbacks } from "@/lib/data";
 import { ResidentGrowthChart } from "@/components/resident-growth-chart";
@@ -11,7 +11,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Resident } from "@/lib/types";
 import { format } from 'date-fns';
-
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 const getAge = (dob: string) => {
   const today = new Date();
@@ -24,53 +25,116 @@ const getAge = (dob: string) => {
   return age;
 };
 
-type AgeGroup = 'children' | 'adolescents' | 'youth' | 'elderly' | null;
+type AgeGroup = 'children' | 'adolescents' | 'youth' | 'elderly';
+type ResidenceType = 'Thường trú' | 'Tạm trú';
+
+interface SelectedGroup {
+    title: string;
+    data: Resident[];
+}
 
 export default function DashboardPage() {
-  const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroup>(null);
+  const [selectedGroup, setSelectedGroup] = useState<SelectedGroup | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const permanentResidents = mockResidents.filter(r => r.residenceType === 'Thường trú').length;
-  const temporaryResidents = mockResidents.filter(r => r.residenceType === 'Tạm trú').length;
+  const permanentResidents = mockResidents.filter(r => r.residenceType === 'Thường trú');
+  const temporaryResidents = mockResidents.filter(r => r.residenceType === 'Tạm trú');
 
-  const ageGroups = {
-    children: mockResidents.filter(r => getAge(r.dob) < 15),
-    adolescents: mockResidents.filter(r => getAge(r.dob) >= 15 && getAge(r.dob) <= 17),
-    youth: mockResidents.filter(r => getAge(r.dob) >= 18 && getAge(r.dob) <= 35),
-    elderly: mockResidents.filter(r => getAge(r.dob) >= 60),
+  const createAgeGroups = (residents: Resident[]) => ({
+    children: residents.filter(r => getAge(r.dob) < 15),
+    adolescents: residents.filter(r => getAge(r.dob) >= 15 && getAge(r.dob) <= 17),
+    youth: residents.filter(r => getAge(r.dob) >= 18 && getAge(r.dob) <= 35),
+    elderly: residents.filter(r => getAge(r.dob) >= 60),
+  });
+
+  const permanentAgeGroups = createAgeGroups(permanentResidents);
+  const temporaryAgeGroups = createAgeGroups(temporaryResidents);
+
+  const ageGroupDetailsConfig: Record<AgeGroup, { title: string; icon: React.ReactNode; }> = {
+    children: { title: "Thiếu nhi (dưới 15)", icon: <Baby className="h-4 w-4 text-muted-foreground" /> },
+    adolescents: { title: "Vị thành niên (15-17)", icon: <GraduationCap className="h-4 w-4 text-muted-foreground" /> },
+    youth: { title: "Thanh niên (18-35)", icon: <PersonStanding className="h-4 w-4 text-muted-foreground" /> },
+    elderly: { title: "Người cao tuổi (60+)", icon: <Home className="h-4 w-4 text-muted-foreground" /> },
   };
-
-  const ageGroupDetails: Record<NonNullable<AgeGroup>, { title: string; icon: React.ReactNode; data: Resident[] }> = {
-    children: { title: "Thiếu nhi (dưới 15)", icon: <Baby className="h-4 w-4 text-muted-foreground" />, data: ageGroups.children },
-    adolescents: { title: "Vị thành niên (15-17)", icon: <GraduationCap className="h-4 w-4 text-muted-foreground" />, data: ageGroups.adolescents },
-    youth: { title: "Thanh niên (18-35)", icon: <PersonStanding className="h-4 w-4 text-muted-foreground" />, data: ageGroups.youth },
-    elderly: { title: "Người cao tuổi (60+)", icon: <Home className="h-4 w-4 text-muted-foreground" />, data: ageGroups.elderly },
-  };
-
-  const handleCardClick = (ageGroup: AgeGroup) => {
-    setSelectedAgeGroup(ageGroup);
+  
+  const handleCardClick = (title: string, data: Resident[]) => {
+    setSelectedGroup({ title, data });
     setIsDialogOpen(true);
   };
   
   const handleDialogClose = (open: boolean) => {
     setIsDialogOpen(open);
     if (!open) {
-        setSelectedAgeGroup(null);
+        setSelectedGroup(null);
     }
   };
 
-  const renderResidentList = () => {
-    if (!selectedAgeGroup) return null;
+  const handleDownloadExcel = () => {
+    // This is a placeholder for the actual Excel download logic.
+    // In a real app, you'd use a library like 'xlsx' or a server endpoint.
+    if (!selectedGroup) return;
 
-    const details = ageGroupDetails[selectedAgeGroup];
+    const headers = ["ID", "Tên", "Ngày sinh", "Địa chỉ", "Quan hệ", "Số điện thoại", "Email", "Loại cư trú", "Ngày tham gia"];
+    const dataToExport = selectedGroup.data.map(resident => [
+        resident.id,
+        resident.name,
+        resident.dob,
+        resident.address,
+        resident.relationship,
+        resident.phone,
+        resident.email,
+        resident.residenceType,
+        resident.joinedDate
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+        + [headers.join(","), ...dataToExport.map(e => e.join(","))].join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `${selectedGroup.title.replace(/ /g, '_')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
+  const renderAgeGroupCards = (groups: ReturnType<typeof createAgeGroups>, residenceType: ResidenceType) => {
+    return (Object.keys(groups) as AgeGroup[]).map(key => {
+        const groupConfig = ageGroupDetailsConfig[key];
+        const data = groups[key];
+        const title = `${groupConfig.title} (${residenceType})`;
+        return (
+            <Card key={`${residenceType}-${key}`} className="cursor-pointer hover:border-primary transition-colors" onClick={() => handleCardClick(title, data)}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">{groupConfig.title}</CardTitle>
+                    {groupConfig.icon}
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold">{data.length}</div>
+                    <p className="text-xs text-muted-foreground">người</p>
+                </CardContent>
+            </Card>
+        )
+    });
+  };
+
+
+  const renderResidentList = () => {
+    if (!selectedGroup) return null;
 
     return (
       <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
-            <DialogTitle>Danh sách cư dân: {details.title}</DialogTitle>
-            <DialogDescription>
-              Hiện có {details.data.length} cư dân trong nhóm tuổi này.
+            <DialogTitle>Danh sách cư dân: {selectedGroup.title}</DialogTitle>
+            <DialogDescription className="flex justify-between items-center pr-6">
+              <span>Hiện có {selectedGroup.data.length} cư dân trong nhóm này.</span>
+               <Button variant="outline" size="sm" onClick={handleDownloadExcel}>
+                <FileDown className="mr-2 h-4 w-4" />
+                Xuất Excel
+              </Button>
             </DialogDescription>
           </DialogHeader>
            <div className="max-h-[60vh] overflow-y-auto">
@@ -84,8 +148,8 @@ export default function DashboardPage() {
                     </TableRow>
                     </TableHeader>
                     <TableBody>
-                    {details.data.length > 0 ? (
-                        details.data.map((resident) => (
+                    {selectedGroup.data.length > 0 ? (
+                        selectedGroup.data.map((resident) => (
                         <TableRow key={resident.id}>
                             <TableCell>
                             <div className="flex items-center gap-3">
@@ -139,7 +203,7 @@ export default function DashboardPage() {
             <Building className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{permanentResidents}</div>
+            <div className="text-2xl font-bold">{permanentResidents.length}</div>
             <p className="text-xs text-muted-foreground">Cư dân ổn định</p>
           </CardContent>
         </Card>
@@ -149,7 +213,7 @@ export default function DashboardPage() {
             <Briefcase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{temporaryResidents}</div>
+            <div className="text-2xl font-bold">{temporaryResidents.length}</div>
             <p className="text-xs text-muted-foreground">Cư dân ngắn hạn</p>
           </CardContent>
         </Card>
@@ -175,24 +239,21 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-       <div>
-        <h2 className="text-2xl font-bold tracking-tight font-headline mb-4">Thống kê Dân số</h2>
-         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {(Object.keys(ageGroupDetails) as Array<NonNullable<AgeGroup>>).map(key => {
-                const group = ageGroupDetails[key];
-                return (
-                    <Card key={key} className="cursor-pointer hover:border-primary transition-colors" onClick={() => handleCardClick(key)}>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{group.title}</CardTitle>
-                            {group.icon}
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold">{group.data.length}</div>
-                            <p className="text-xs text-muted-foreground">người</p>
-                        </CardContent>
-                    </Card>
-                )
-            })}
+       <div className="space-y-6">
+        <div>
+            <h2 className="text-2xl font-bold tracking-tight font-headline mb-1">Thống kê Nhân khẩu Thường trú</h2>
+            <p className="text-sm text-muted-foreground">Phân loại dân số theo độ tuổi cho các cư dân thường trú.</p>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-4">
+                {renderAgeGroupCards(permanentAgeGroups, "Thường trú")}
+            </div>
+        </div>
+        <Separator />
+         <div>
+            <h2 className="text-2xl font-bold tracking-tight font-headline mb-1">Thống kê Nhân khẩu Tạm trú</h2>
+            <p className="text-sm text-muted-foreground">Phân loại dân số theo độ tuổi cho các cư dân tạm trú.</p>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-4">
+                {renderAgeGroupCards(temporaryAgeGroups, "Tạm trú")}
+            </div>
         </div>
       </div>
 
