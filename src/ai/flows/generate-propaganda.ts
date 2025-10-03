@@ -1,4 +1,3 @@
-// src/ai/flows/generate-propaganda.ts
 'use server';
 /**
  * @fileOverview A propaganda generation AI agent.
@@ -33,7 +32,7 @@ const prompt = ai.definePrompt({
   name: 'generatePropagandaPrompt',
   input: {schema: GeneratePropagandaInputSchema},
   output: {schema: GeneratePropagandaOutputSchema},
-  prompt: `You are an AI assistant designed to generate effective propaganda and motivational messages for community engagement.
+  prompt: `You are an AI assistant designed to generate effective propaganda and motivational messages for community engagement. Your output must be in Vietnamese.
 
   Topic: {{{topic}}}
   Tone: {{{tone}}}
@@ -41,7 +40,8 @@ const prompt = ai.definePrompt({
   Desired Outcome: {{{desiredOutcome}}}
   Additional Context: {{{additionalContext}}}
 
-  Generate a propaganda message that is tailored to the target audience, employs the specified tone, and aims to achieve the desired outcome.`,
+  Generate a propaganda message that is tailored to the target audience, employs the specified tone, and aims to achieve the desired outcome.
+  The message should be well-formatted with newlines for readability.`,
 });
 
 const generatePropagandaFlow = ai.defineFlow(

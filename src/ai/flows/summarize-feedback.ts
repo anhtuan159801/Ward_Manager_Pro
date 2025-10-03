@@ -31,7 +31,7 @@ const prompt = ai.definePrompt({
   name: 'summarizeFeedbackPrompt',
   input: {schema: SummarizeFeedbackInputSchema},
   output: {schema: SummarizeFeedbackOutputSchema},
-  prompt: `You are an AI assistant helping ward leaders understand community feedback.
+  prompt: `You are an AI assistant helping ward leaders understand community feedback. Your output must be in Vietnamese.
   Summarize the following feedback text into a concise summary highlighting key issues and concerns:
 
   Feedback Text: {{{feedbackText}}}

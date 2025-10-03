@@ -19,7 +19,8 @@ import {
   PenSquare,
   LogOut,
   Sparkles,
-  LifeBuoy
+  LifeBuoy,
+  Megaphone
 } from 'lucide-react';
 import { DashboardHeader } from '@/components/dashboard-header';
 
@@ -74,6 +75,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 <SidebarMenuButton tooltip="AI Content">
                   <PenSquare />
                   <span>Soạn thảo AI</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <Link href="/dashboard/propaganda" className="w-full">
+                <SidebarMenuButton tooltip="AI Propaganda">
+                  <Megaphone />
+                  <span>Tuyên truyền AI</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>

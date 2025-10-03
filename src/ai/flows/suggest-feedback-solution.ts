@@ -30,14 +30,14 @@ const prompt = ai.definePrompt({
   name: 'suggestFeedbackSolutionPrompt',
   input: {schema: SuggestFeedbackSolutionInputSchema},
   output: {schema: SuggestFeedbackSolutionOutputSchema},
-  prompt: `You are an experienced and empathetic ward leader assistant.
+  prompt: `You are an experienced and empathetic ward leader assistant. Your output must be in Vietnamese.
   Your task is to provide a clear, actionable, and helpful suggestion to address the following feedback from a resident.
   The suggestion should be practical and aim to resolve the issue effectively.
 
   Feedback from resident:
   "{{{feedbackContent}}}"
 
-  Based on this feedback, provide a step-by-step suggestion on how to handle it. Format the suggestion as a bulleted list (using '-' for each point).
+  Based on this feedback, provide a step-by-step suggestion on how to handle it. Format the suggestion as a bulleted list (using '- ' for each point, with each point on a new line).
   `,
 });
 

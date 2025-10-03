@@ -10,39 +10,38 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sparkles, Loader2, Send, FileDown, Copy } from 'lucide-react';
-import { generateContentAction } from '@/actions/content';
+import { Megaphone, Loader2, Copy, WandSparkles } from 'lucide-react';
+import { generatePropagandaAction } from '@/actions/propaganda';
 import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
-  contentType: z.enum(['announcement', 'report', 'invitation'], {
-    required_error: "Vui lòng chọn loại nội dung."
-  }),
   topic: z.string().min(5, { message: 'Chủ đề phải có ít nhất 5 ký tự.' }),
+  tone: z.string().min(3, { message: 'Giọng điệu phải có ít nhất 3 ký tự.' }),
   targetAudience: z.string().min(3, { message: 'Đối tượng phải có ít nhất 3 ký tự.' }),
+  desiredOutcome: z.string().min(10, { message: 'Kết quả mong muốn phải có ít nhất 10 ký tự.' }),
   additionalContext: z.string().optional(),
 });
 
-export default function AiContentPage() {
-  const [generatedContent, setGeneratedContent] = useState<string | null>(null);
+export default function AiPropagandaPage() {
+  const [generatedMessage, setGeneratedMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      contentType: 'announcement',
       topic: '',
+      tone: '',
       targetAudience: '',
+      desiredOutcome: '',
       additionalContext: '',
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    setGeneratedContent(null);
-    const result = await generateContentAction(values);
+    setGeneratedMessage(null);
+    const result = await generatePropagandaAction(values);
     if (result.error) {
       toast({
         variant: 'destructive',
@@ -50,14 +49,14 @@ export default function AiContentPage() {
         description: result.error,
       });
     } else {
-      setGeneratedContent(result.draftContent);
+      setGeneratedMessage(result.message);
     }
     setIsLoading(false);
   }
 
   const handleCopy = () => {
-    if (generatedContent) {
-      navigator.clipboard.writeText(generatedContent);
+    if (generatedMessage) {
+      navigator.clipboard.writeText(generatedMessage);
       toast({
         title: 'Thành công',
         description: 'Đã sao chép nội dung vào clipboard.',
@@ -69,37 +68,17 @@ export default function AiContentPage() {
     <div className="grid gap-8 lg:grid-cols-2">
       <div className="flex flex-col gap-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight font-headline">Soạn thảo với AI</h1>
-          <p className="text-muted-foreground">Tạo nhanh thông báo, báo cáo, thư mời với Gemini.</p>
+          <h1 className="text-3xl font-bold tracking-tight font-headline">Tuyên truyền với AI</h1>
+          <p className="text-muted-foreground">Tạo nhanh thông điệp, khẩu hiệu, bài viết vận động với Gemini.</p>
         </div>
         <Card>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <CardHeader>
                 <CardTitle>Nhập thông tin</CardTitle>
-                <CardDescription>Cung cấp chi tiết để AI tạo nội dung chính xác nhất.</CardDescription>
+                <CardDescription>Cung cấp chi tiết để AI tạo thông điệp hiệu quả nhất.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="contentType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Loại nội dung</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger><SelectValue placeholder="Chọn loại văn bản" /></SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="announcement">Thông báo</SelectItem>
-                          <SelectItem value="report">Báo cáo</SelectItem>
-                          <SelectItem value="invitation">Thư mời</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <FormField
                   control={form.control}
                   name="topic"
@@ -107,7 +86,20 @@ export default function AiContentPage() {
                     <FormItem>
                       <FormLabel>Chủ đề</FormLabel>
                       <FormControl>
-                        <Input placeholder="VD: Họp tổ dân phố tháng 9" {...field} />
+                        <Input placeholder="VD: Giữ gìn vệ sinh chung" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
+                  name="tone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Giọng điệu</FormLabel>
+                      <FormControl>
+                        <Input placeholder="VD: Thân mật, kêu gọi, trang trọng" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -120,7 +112,20 @@ export default function AiContentPage() {
                     <FormItem>
                       <FormLabel>Đối tượng</FormLabel>
                       <FormControl>
-                        <Input placeholder="VD: Toàn thể cư dân tổ 12" {...field} />
+                        <Input placeholder="VD: Các hộ gia đình, thanh niên" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
+                  name="desiredOutcome"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Kết quả mong muốn</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="VD: Người dân nâng cao ý thức, tích cực tham gia dọn dẹp..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -133,7 +138,7 @@ export default function AiContentPage() {
                     <FormItem>
                       <FormLabel>Thông tin bổ sung (tùy chọn)</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="VD: Nội dung họp bao gồm..." {...field} />
+                        <Textarea placeholder="VD: Trích dẫn câu nói của Bác Hồ..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -142,8 +147,8 @@ export default function AiContentPage() {
               </CardContent>
               <CardFooter>
                 <Button type="submit" disabled={isLoading} className="w-full">
-                  {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                  Tạo nội dung
+                  {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <WandSparkles className="mr-2 h-4 w-4" />}
+                  Tạo thông điệp
                 </Button>
               </CardFooter>
             </form>
@@ -153,21 +158,19 @@ export default function AiContentPage() {
 
       <Card className="flex flex-col">
         <CardHeader>
-          <CardTitle>Nội dung được tạo</CardTitle>
-          <CardDescription>Đây là bản nháp do AI tạo ra. Vui lòng xem lại và chỉnh sửa.</CardDescription>
+          <CardTitle>Thông điệp được tạo</CardTitle>
+          <CardDescription>Đây là bản nháp do AI tạo ra. Bạn có thể sao chép và sử dụng.</CardDescription>
         </CardHeader>
         <CardContent className="flex-grow">
           <Textarea
             readOnly
-            value={generatedContent || "Nội dung sẽ xuất hiện ở đây..."}
+            value={generatedMessage || "Thông điệp tuyên truyền sẽ xuất hiện ở đây..."}
             className="h-full min-h-[300px] text-base resize-none whitespace-pre-wrap"
           />
         </CardContent>
-        {generatedContent && (
-          <CardFooter className="flex-col sm:flex-row gap-2 justify-end pt-4">
+        {generatedMessage && (
+          <CardFooter className="justify-end pt-4">
             <Button variant="outline" onClick={handleCopy}><Copy className="mr-2 h-4 w-4" /> Sao chép</Button>
-            <Button variant="outline"><FileDown className="mr-2 h-4 w-4" /> Xuất PDF</Button>
-            <Button><Send className="mr-2 h-4 w-4" /> Gửi thông báo</Button>
           </CardFooter>
         )}
       </Card>

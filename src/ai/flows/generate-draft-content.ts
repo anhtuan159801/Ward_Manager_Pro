@@ -38,7 +38,7 @@ const prompt = ai.definePrompt({
   name: 'generateDraftContentPrompt',
   input: {schema: GenerateDraftContentInputSchema},
   output: {schema: GenerateDraftContentOutputSchema},
-  prompt: `You are an AI assistant helping a ward leader generate content.
+  prompt: `You are an AI assistant helping a ward leader generate content. Your output must be in Vietnamese.
 
   You will generate a draft for the ward leader based on the provided information, based on content type. The content should be appropriate for the target audience.
   
