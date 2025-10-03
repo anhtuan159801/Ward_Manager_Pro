@@ -18,7 +18,7 @@ const SuggestFeedbackSolutionInputSchema = z.object({
 export type SuggestFeedbackSolutionInput = z.infer<typeof SuggestFeedbackSolutionInputSchema>;
 
 const SuggestFeedbackSolutionOutputSchema = z.object({
-  suggestion: z.string().describe('The AI-generated suggestion to resolve the feedback.'),
+  suggestion: z.string().describe('The AI-generated suggestion to resolve the feedback, formatted as a bulleted list.'),
 });
 export type SuggestFeedbackSolutionOutput = z.infer<typeof SuggestFeedbackSolutionOutputSchema>;
 
@@ -37,7 +37,7 @@ const prompt = ai.definePrompt({
   Feedback from resident:
   "{{{feedbackContent}}}"
 
-  Based on this feedback, provide a step-by-step suggestion on how to handle it.
+  Based on this feedback, provide a step-by-step suggestion on how to handle it. Format the suggestion as a bulleted list (using '-' for each point).
   `,
 });
 

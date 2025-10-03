@@ -123,7 +123,16 @@ export default function FeedbackPage() {
                     </div>
                     {isGeneratingSuggestion && <p className="text-sm text-muted-foreground flex items-center"><Loader2 className="mr-2 h-4 w-4 animate-spin" /> AI đang suy nghĩ...</p>}
                     {suggestionError && <Alert variant="destructive"><AlertCircle className="h-4 w-4" /><AlertTitle>Lỗi</AlertTitle><AlertDescription>{suggestionError}</AlertDescription></Alert>}
-                    {suggestion && <div className="text-sm text-muted-foreground bg-secondary p-4 rounded-md whitespace-pre-wrap">{suggestion}</div>}
+                    {suggestion && (
+                        <div className="text-sm bg-background text-foreground p-4 rounded-md border">
+                            <ul className="list-disc list-inside space-y-2">
+                                {suggestion.split('\n').map((line, index) => {
+                                    const cleanedLine = line.replace(/^- /, '');
+                                    return cleanedLine.trim() && <li key={index}>{cleanedLine}</li>;
+                                })}
+                            </ul>
+                        </div>
+                    )}
                 </div>
               </div>
               <DialogFooter>
