@@ -70,10 +70,8 @@ export default function DashboardPage() {
   };
 
   const handleDownloadExcel = () => {
-    // This is a placeholder for the actual Excel download logic.
-    // In a real app, you'd use a library like 'xlsx' or a server endpoint.
     if (!selectedGroup) return;
-
+  
     const headers = ["ID", "Tên", "Ngày sinh", "Địa chỉ", "Quan hệ", "Số điện thoại", "Email", "Loại cư trú", "Ngày tham gia"];
     const dataToExport = selectedGroup.data.map(resident => [
         resident.id,
@@ -81,22 +79,27 @@ export default function DashboardPage() {
         resident.dob,
         resident.address,
         resident.relationship,
-        resident.phone,
+        `'${resident.phone}`, // Prevent excel from converting to number
         resident.email,
         resident.residenceType,
         resident.joinedDate
-    ]);
-
-    const csvContent = "data:text/csv;charset=utf-8," 
-        + [headers.join(","), ...dataToExport.map(e => e.join(","))].join("\n");
-
-    const encodedUri = encodeURI(csvContent);
+    ].map(field => `"${String(field).replace(/"/g, '""')}"`)); // Quote all fields
+  
+    const csvRows = [headers.join(","), ...dataToExport.map(row => row.join(","))];
+    const csvContent = csvRows.join("\n");
+    
+    // Add BOM for UTF-8 support in Excel
+    const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+    const blob = new Blob([bom, csvContent], { type: 'text/csv;charset=utf-8;' });
+    
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `${selectedGroup.title.replace(/ /g, '_')}.csv`);
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `${selectedGroup.title.replace(/\s+/g, '_').toLowerCase()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
 
