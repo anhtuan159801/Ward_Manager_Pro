@@ -2,7 +2,10 @@ export type Resident = {
   id: string;
   name: string;
   address: string;
+  relationship: 'Chủ hộ' | 'Thành viên';
   phone: string;
+  email: string;
+  residenceType: 'Thường trú' | 'Tạm trú';
   joinedDate: string;
   avatarUrl: string;
 };

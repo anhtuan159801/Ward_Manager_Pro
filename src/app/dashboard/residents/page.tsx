@@ -5,7 +5,7 @@ import { mockResidents } from '@/lib/data';
 import { MoreHorizontal, PlusCircle } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { format } from 'date-fns';
+import { Badge } from '@/components/ui/badge';
 
 export default function ResidentsPage() {
   return (
@@ -30,9 +30,11 @@ export default function ResidentsPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Tên</TableHead>
-                <TableHead className="hidden md:table-cell">Địa chỉ</TableHead>
-                <TableHead className="hidden lg:table-cell">Số điện thoại</TableHead>
-                <TableHead className="hidden lg:table-cell">Ngày tham gia</TableHead>
+                <TableHead className="hidden lg:table-cell">Địa chỉ</TableHead>
+                <TableHead className="hidden md:table-cell">Số điện thoại</TableHead>
+                <TableHead className="hidden lg:table-cell">Email</TableHead>
+                <TableHead>Vai trò</TableHead>
+                <TableHead>Cư trú</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
                 </TableHead>
@@ -50,9 +52,19 @@ export default function ResidentsPage() {
                       <div className="font-medium">{resident.name}</div>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">{resident.address}</TableCell>
-                  <TableCell className="hidden lg:table-cell">{resident.phone}</TableCell>
-                  <TableCell className="hidden lg:table-cell">{format(new Date(resident.joinedDate), 'dd/MM/yyyy')}</TableCell>
+                  <TableCell className="hidden lg:table-cell">{resident.address}</TableCell>
+                  <TableCell className="hidden md:table-cell">{resident.phone}</TableCell>
+                  <TableCell className="hidden lg:table-cell">{resident.email}</TableCell>
+                  <TableCell>
+                     <Badge variant={resident.relationship === 'Chủ hộ' ? 'default' : 'secondary'}>
+                        {resident.relationship}
+                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={resident.residenceType === 'Thường trú' ? 'outline' : 'secondary'}>
+                      {resident.residenceType}
+                    </Badge>
+                  </TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
