@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
@@ -13,14 +13,18 @@ import { Textarea } from '@/components/ui/textarea';
 import { Megaphone, Loader2, Copy, WandSparkles } from 'lucide-react';
 import { generatePropagandaAction } from '@/actions/propaganda';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
   topic: z.string().min(5, { message: 'Chủ đề phải có ít nhất 5 ký tự.' }),
-  tone: z.string().min(3, { message: 'Giọng điệu phải có ít nhất 3 ký tự.' }),
-  targetAudience: z.string().min(3, { message: 'Đối tượng phải có ít nhất 3 ký tự.' }),
+  tone: z.string().min(3, { message: 'Vui lòng chọn một giọng điệu.' }),
+  targetAudience: z.string().min(3, { message: 'Vui lòng chọn một đối tượng.' }),
   desiredOutcome: z.string().min(10, { message: 'Kết quả mong muốn phải có ít nhất 10 ký tự.' }),
   additionalContext: z.string().optional(),
 });
+
+const TONE_OPTIONS = ["Thân mật", "Kêu gọi", "Trang trọng", "Vui vẻ", "Cổ động"];
+const AUDIENCE_OPTIONS = ["Tất cả người dân", "Các hộ gia đình", "Thanh niên", "Người cao tuổi", "Phụ nữ", "Trẻ em"];
 
 export default function AiPropagandaPage() {
   const [generatedMessage, setGeneratedMessage] = useState<string | null>(null);
@@ -73,12 +77,12 @@ export default function AiPropagandaPage() {
         </div>
         <Card>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <CardHeader>
                 <CardTitle>Nhập thông tin</CardTitle>
                 <CardDescription>Cung cấp chi tiết để AI tạo thông điệp hiệu quả nhất.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-6">
                 <FormField
                   control={form.control}
                   name="topic"
@@ -98,8 +102,20 @@ export default function AiPropagandaPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Giọng điệu</FormLabel>
-                      <FormControl>
-                        <Input placeholder="VD: Thân mật, kêu gọi, trang trọng" {...field} />
+                       <FormControl>
+                        <div className="flex flex-wrap gap-2 pt-2">
+                          {TONE_OPTIONS.map(option => (
+                            <Button
+                              key={option}
+                              type="button"
+                              variant={field.value === option ? "default" : "outline"}
+                              onClick={() => field.onChange(option)}
+                              className="rounded-full"
+                            >
+                              {option}
+                            </Button>
+                          ))}
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -112,7 +128,19 @@ export default function AiPropagandaPage() {
                     <FormItem>
                       <FormLabel>Đối tượng</FormLabel>
                       <FormControl>
-                        <Input placeholder="VD: Các hộ gia đình, thanh niên" {...field} />
+                        <div className="flex flex-wrap gap-2 pt-2">
+                          {AUDIENCE_OPTIONS.map(option => (
+                            <Button
+                              key={option}
+                              type="button"
+                              variant={field.value === option ? "default" : "outline"}
+                              onClick={() => field.onChange(option)}
+                              className="rounded-full"
+                            >
+                              {option}
+                            </Button>
+                          ))}
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

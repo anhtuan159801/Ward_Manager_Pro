@@ -15,12 +15,14 @@ import { Sparkles, Loader2, Send, FileDown, Copy } from 'lucide-react';
 import { generateContentAction } from '@/actions/content';
 import { useToast } from '@/hooks/use-toast';
 
+const AUDIENCE_OPTIONS = ["Tất cả người dân", "Các hộ gia đình", "Thanh niên", "Người cao tuổi", "Phụ nữ", "Trẻ em"];
+
 const formSchema = z.object({
   contentType: z.enum(['announcement', 'report', 'invitation'], {
     required_error: "Vui lòng chọn loại nội dung."
   }),
   topic: z.string().min(5, { message: 'Chủ đề phải có ít nhất 5 ký tự.' }),
-  targetAudience: z.string().min(3, { message: 'Đối tượng phải có ít nhất 3 ký tự.' }),
+  targetAudience: z.string().min(3, { message: 'Vui lòng chọn một đối tượng.' }),
   additionalContext: z.string().optional(),
 });
 
@@ -79,7 +81,7 @@ export default function AiContentPage() {
                 <CardTitle>Nhập thông tin</CardTitle>
                 <CardDescription>Cung cấp chi tiết để AI tạo nội dung chính xác nhất.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-6">
                 <FormField
                   control={form.control}
                   name="contentType"
@@ -120,7 +122,19 @@ export default function AiContentPage() {
                     <FormItem>
                       <FormLabel>Đối tượng</FormLabel>
                       <FormControl>
-                        <Input placeholder="VD: Toàn thể cư dân tổ 12" {...field} />
+                        <div className="flex flex-wrap gap-2 pt-2">
+                          {AUDIENCE_OPTIONS.map(option => (
+                            <Button
+                              key={option}
+                              type="button"
+                              variant={field.value === option ? "default" : "outline"}
+                              onClick={() => field.onChange(option)}
+                              className="rounded-full"
+                            >
+                              {option}
+                            </Button>
+                          ))}
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
