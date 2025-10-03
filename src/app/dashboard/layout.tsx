@@ -23,6 +23,7 @@ import {
   Megaphone
 } from 'lucide-react';
 import { DashboardHeader } from '@/components/dashboard-header';
+import { AiAssistant } from '@/components/ai-assistant';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
@@ -112,6 +113,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <main className="flex-1 p-4 md:p-6 lg:p-8">
           {children}
         </main>
+        <AiAssistant />
       </SidebarInset>
     </SidebarProvider>
   );
