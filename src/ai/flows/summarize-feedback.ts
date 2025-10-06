@@ -10,6 +10,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getFeedbacks } from '@/lib/data';
 
 const SummarizeFeedbackInputSchema = z.object({
   feedbackText: z

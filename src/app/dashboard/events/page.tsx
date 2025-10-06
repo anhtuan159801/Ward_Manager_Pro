@@ -1,12 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { mockEvents } from '@/lib/data';
+import { getEvents } from '@/lib/data';
 import { format } from 'date-fns';
 import { PlusCircle, QrCode } from 'lucide-react';
 import Image from 'next/image';
 
-export default function EventsPage() {
+export default async function EventsPage() {
+  const events = await getEvents();
   const findImage = (id: string) => PlaceHolderImages.find(img => img.id === id);
 
   return (
@@ -23,7 +24,7 @@ export default function EventsPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {mockEvents.map((event) => {
+        {events.map((event) => {
           const qrImage = findImage(event.qrCodeUrl);
           return (
             <Card key={event.id} className="flex flex-col">

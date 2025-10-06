@@ -1,11 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { mockResidents } from '@/lib/data';
-import { MoreHorizontal, PlusCircle } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, X } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -21,15 +20,26 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
+import { getResidents } from '@/lib/data';
+import { deleteAllResidents } from '@/actions/residents';
 
 export default function ResidentsPage() {
-  const [residents, setResidents] = useState<Resident[]>(mockResidents);
+  const [residents, setResidents] = useState<Resident[]>([]);
   const [residentToEdit, setResidentToEdit] = useState<Resident | undefined>(undefined);
   const [residentToDelete, setResidentToDelete] = useState<Resident | null>(null);
   const [isAddDialogOpen, setAddDialogOpen] = useState(false);
   const [isConfirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = useState(false);
+  const [isConfirmDeleteAllDialogOpen, setConfirmDeleteAllDialogOpen] = useState(false);
+  const [isDeletingAll, setIsDeletingAll] = useState(false);
 
+  useEffect(() => {
+    const fetchResidents = async () => {
+      const data = await getResidents();
+      setResidents(data);
+    };
+    fetchResidents();
+  }, []);
 
   const handleEdit = (resident: Resident) => {
     setResidentToEdit(resident);
@@ -46,6 +56,25 @@ export default function ResidentsPage() {
       setResidents(residents.filter(r => r.id !== residentToDelete.id));
       setResidentToDelete(null);
       setConfirmDeleteDialogOpen(false);
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    setIsDeletingAll(true);
+    try {
+      const result = await deleteAllResidents();
+      if (result.success) {
+        setResidents([]);
+        setConfirmDeleteAllDialogOpen(false);
+        // Show success message
+        alert('Đã xóa toàn bộ dân cư thành công!');
+      } else {
+        alert(`Lỗi: ${result.message}`);
+      }
+    } catch (error) {
+      alert(`Lỗi: ${error instanceof Error ? error.message : 'Lỗi không xác định'}`);
+    } finally {
+      setIsDeletingAll(false);
     }
   };
   
@@ -69,16 +98,26 @@ export default function ResidentsPage() {
             <CardTitle>Danh sách Cư dân</CardTitle>
             <CardDescription>Hiện có {residents.length} cư dân trong khu phố.</CardDescription>
           </div>
-          <AddResidentDialog 
-            open={isAddDialogOpen} 
-            onOpenChange={handleDialogClose}
-            residentToEdit={residentToEdit}
-          >
-            <Button onClick={() => setAddDialogOpen(true)}>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Thêm Cư dân
+          <div className="flex gap-2">
+            <AddResidentDialog 
+              open={isAddDialogOpen} 
+              onOpenChange={handleDialogClose}
+              residentToEdit={residentToEdit}
+            >
+              <Button onClick={() => setAddDialogOpen(true)}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Thêm Cư dân
+              </Button>
+            </AddResidentDialog>
+            <Button 
+              variant="destructive" 
+              onClick={() => setConfirmDeleteAllDialogOpen(true)}
+              disabled={residents.length === 0}
+            >
+              <X className="mr-2 h-4 w-4" />
+              Xóa toàn bộ
             </Button>
-          </AddResidentDialog>
+          </div>
         </CardHeader>
         <CardContent>
           <Table>
@@ -107,7 +146,7 @@ export default function ResidentsPage() {
                       <div className="font-medium">{resident.name}</div>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell">{format(new Date(resident.dob), 'dd/MM/yyyy')}</TableCell>
+                  <TableCell className="hidden sm:table-cell">{resident.dob}</TableCell>
                   <TableCell className="hidden lg:table-cell">{resident.address}</TableCell>
                   <TableCell className="hidden md:table-cell">{resident.phone}</TableCell>
                   <TableCell>
@@ -153,6 +192,29 @@ export default function ResidentsPage() {
           <AlertDialogFooter>
             <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete}>Xóa</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete All Confirmation Dialog */}
+      <AlertDialog open={isConfirmDeleteAllDialogOpen} onOpenChange={setConfirmDeleteAllDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Xóa toàn bộ dân cư?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Bạn có chắc chắn muốn xóa toàn bộ {residents.length} cư dân? 
+              Hành động này không thể được hoàn tác và sẽ xóa vĩnh viễn tất cả dữ liệu cư dân khỏi hệ thống.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeletingAll}>Hủy</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteAll} 
+              disabled={isDeletingAll}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {isDeletingAll ? 'Đang xóa...' : 'Xóa toàn bộ'}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

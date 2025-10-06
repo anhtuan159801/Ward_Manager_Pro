@@ -9,6 +9,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getFeedbacks } from '@/lib/data';
 
 const GeneratePropagandaInputSchema = z.object({
   topic: z.string().describe('The topic of the propaganda.'),

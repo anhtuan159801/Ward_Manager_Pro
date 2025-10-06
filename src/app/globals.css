@@ -86,3 +86,16 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Hide Next.js Dev Tools button (dev overlay) */
+[data-nextjs-dev-tools-button],
+button[data-nextjs-dev-tools-button="true"],
+button[aria-label="Open Next.js Dev Tools"],
+button[data-next-mark][data-nextjs-dev-tools-button] {
+  display: none !important;
+}
+
+/* Hide Next.js Dev Tools menu */
+[data-nextjs-dev-tools-menu] {
+  display: none !important;
+}

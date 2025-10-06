@@ -1,16 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // Import useEffect
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-import { Sparkles, Bot, User, Send, Loader2 } from 'lucide-react';
+import { Sparkles, Bot, UserIcon, Send, Loader2 } from 'lucide-react'; // Renamed User to UserIcon
 import { Input } from './ui/input';
 import { ScrollArea } from './ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { mockUser } from '@/lib/data';
+import { getUser } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { answerSystemQuery } from '@/actions/assistant';
 import { useToast } from '@/hooks/use-toast';
+import type { User } from '@/lib/types'; // Import User type
 
 type Message = {
   role: 'user' | 'assistant';
@@ -22,7 +23,24 @@ export function AiAssistant() {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<User | null>(null); // State for user data
   const { toast } = useToast();
+
+  // Fetch user data when the sheet opens and messages are empty
+  useEffect(() => {
+    if (isOpen && messages.length === 0) {
+      const fetchUser = async () => {
+        try {
+          const userData = await getUser();
+          setUser(userData);
+        } catch (error) {
+          console.error('Error fetching user:', error);
+          setUser(null);
+        }
+      };
+      fetchUser();
+    }
+  }, [isOpen, messages.length]); // Depend on isOpen and messages.length
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -32,15 +50,16 @@ export function AiAssistant() {
     setInput('');
     setIsLoading(true);
 
+    // Safely handle the result of answerSystemQuery
     const result = await answerSystemQuery({ query: input });
 
-    if (result.error) {
+    if ('error' in result) { // Check if error property exists
       toast({
         variant: 'destructive',
         title: 'Lỗi',
         description: result.error,
       });
-      setMessages(prev => prev.filter(m => m !== userMessage));
+      setMessages(prev => prev.filter(m => m !== userMessage)); // Remove the user message if there's an error
     } else {
       const assistantMessage: Message = { role: 'assistant', content: result.answer };
       setMessages((prev) => [...prev, assistantMessage]);
@@ -108,11 +127,11 @@ export function AiAssistant() {
                   >
                     {message.content}
                   </div>
-                   {message.role === 'user' && (
-                     <Avatar className="h-8 w-8">
-                        <AvatarImage src={mockUser.avatarUrl} alt={mockUser.name} />
-                        <AvatarFallback>{mockUser.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
+                   {message.role === 'user' && user && ( // Conditionally render if user data exists
+                        <Avatar className="h-8 w-8">
+                           <AvatarImage src={user.avatarUrl} alt={user.name} />
+                           <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                       </Avatar>
                   )}
                 </div>
               ))}

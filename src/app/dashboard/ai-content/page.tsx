@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Sparkles, Loader2, Send, FileDown, Copy } from 'lucide-react';
 import { generateContentAction } from '@/actions/content';
 import { useToast } from '@/hooks/use-toast';
+import { copyToClipboard } from '@/lib/utils';
 
 const AUDIENCE_OPTIONS = ["Tất cả người dân", "Các hộ gia đình", "Thanh niên", "Người cao tuổi", "Phụ nữ", "Trẻ em"];
 
@@ -57,14 +58,14 @@ export default function AiContentPage() {
     setIsLoading(false);
   }
 
-  const handleCopy = () => {
-    if (generatedContent) {
-      navigator.clipboard.writeText(generatedContent);
-      toast({
-        title: 'Thành công',
-        description: 'Đã sao chép nội dung vào clipboard.',
-      });
-    }
+  const handleCopy = async () => {
+    if (!generatedContent) return;
+    const ok = await copyToClipboard(generatedContent);
+    toast({
+      variant: ok ? 'default' : 'destructive',
+      title: ok ? 'Thành công' : 'Lỗi',
+      description: ok ? 'Đã sao chép nội dung vào clipboard.' : 'Trình duyệt không cho phép sao chép tự động.',
+    });
   };
 
   return (

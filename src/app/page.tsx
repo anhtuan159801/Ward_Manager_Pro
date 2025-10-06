@@ -26,7 +26,7 @@ export default function Home() {
         </CardContent>
       </Card>
       <footer className="mt-8 text-sm text-muted-foreground">
-        <p>Phát triển bởi Gemini & Firebase Studio</p>
+        <p>Phát triển bởi Ban điều hành Khu phố 69, phường Tân thới Hiệp, Hồ Chí Minh</p>
       </footer>
     </main>
   );

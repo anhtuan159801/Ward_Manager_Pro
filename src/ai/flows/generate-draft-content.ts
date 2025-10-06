@@ -11,6 +11,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getResidents, getEvents, getFeedbacks } from '@/lib/data';
 
 const GenerateDraftContentInputSchema = z.object({
   contentType: z
@@ -38,7 +39,7 @@ const prompt = ai.definePrompt({
   name: 'generateDraftContentPrompt',
   input: {schema: GenerateDraftContentInputSchema},
   output: {schema: GenerateDraftContentOutputSchema},
-  prompt: `You are an AI assistant helping a ward leader generate content. Your output must be in Vietnamese.
+  prompt: `You are an AI assistant helping ward leaders generate content. Your output must be in Vietnamese.
 
   You will generate a draft for the ward leader based on the provided information, based on content type. The content should be appropriate for the target audience.
   

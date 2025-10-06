@@ -2,11 +2,12 @@
 
 import { summarizeFeedback } from '@/ai/flows/summarize-feedback';
 import { suggestFeedbackSolution, type SuggestFeedbackSolutionInput } from '@/ai/flows/suggest-feedback-solution';
-import { mockFeedbacks } from '@/lib/data';
+import { getFeedbacks } from '@/lib/data'; // Import getFeedbacks
 
 export async function getFeedbackSummary(): Promise<{ summary: string } | { error: string }> {
   try {
-    const allFeedbackText = mockFeedbacks.map(fb => `From ${fb.author}: ${fb.content}`).join('\n\n');
+    const feedbacks = await getFeedbacks(); // Fetch feedbacks from Supabase
+    const allFeedbackText = feedbacks.map(fb => `From ${fb.author}: ${fb.content}`).join('\n\n');
     
     if (!allFeedbackText) {
       return { summary: "Không có phản ánh nào để tóm tắt." };

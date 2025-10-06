@@ -1,0 +1,40 @@
+# TODO List: Integrate .env file with source code and Supabase
+
+- [x] Analyze project structure and identify configuration-related files.
+- [x] Examine `next.config.ts` for environment variable usage.
+- [x] Examine `src/lib/data.ts` for API endpoints or other configurable values.
+- [x] Examine `src/actions/` directory for any hardcoded configurations.
+- [x] Examine `src/ai/flows/` directory for any hardcoded configurations.
+- [x] Read the `.env` file to understand its contents.
+- [x] Examine `src/ai/genkit.ts` to understand how AI services are initialized and configured.
+- [x] Modify `src/ai/genkit.ts` to explicitly use `process.env.GEMINI_API_KEY`.
+- [x] Install `@types/node` to resolve TypeScript errors.
+- [x] Check `package.json` to ensure `genkit` and `@genkit-ai/google-genai` are installed.
+- [x] Examine `src/lib/data.ts` for any hardcoded image URLs or other potential configuration values that could be moved to `.env`.
+- [x] Examine `src/app/page.tsx` for any hardcoded configuration values.
+- [x] Examine `src/app/dashboard/layout.tsx` for any hardcoded configuration values.
+- [x] Examine `src/components/ui/sidebar.tsx` for any hardcoded configuration values.
+- [x] Ensure `.env` file is correctly structured with necessary variables.
+- [x] Attempted to fix hydration error in `src/app/layout.tsx` by ensuring `suppressHydrationWarning` is explicitly set to `true`.
+- [x] Re-examined `src/app/layout.tsx` and added an empty `style={{}}` attribute to the `<body>` tag to address the hydration error.
+- [x] Removed the Next.js dev tools button from `src/app/layout.tsx` as requested.
+- [x] Corrected syntax error in `src/app/layout.tsx` caused by previous `replace_in_file` operation.
+- [x] Fixed the duplicate closing `</html>` tag in `src/app/layout.tsx`.
+- [x] Test the application to verify environment variable integration and hydration error resolution.
+- [ ] Create necessary tables in Supabase for data storage (SQL statements generated, execution requires manual intervention or alternative method).
+- [x] Install the Supabase client library.
+- [x] Create `src/lib/supabaseClient.ts` to initialize the Supabase client.
+- [x] Update `src/lib/data.ts` to fetch data from Supabase instead of using mock data.
+- [x] Update AI flows to use Supabase data by modifying `src/ai/flows/answer-query.ts`.
+- [x] Update `src/ai/flows/generate-draft-content.ts` to fetch data from Supabase.
+- [x] Update `src/ai/flows/summarize-feedback.ts` to fetch data from Supabase.
+- [x] Update `src/ai/flows/suggest-feedback-solution.ts` to fetch data from Supabase.
+- [x] Updated `src/ai/flows/generate-propaganda.ts` to import `getFeedbacks` from `@/lib/data` and use it in the tool definition.
+- [ ] Implement file upload functionality for residents (Excel, CSV, TXT).
+- [ ] Implement logic to process uploaded files and update Supabase.
+- [ ] Implement UI updates to reflect changes after file uploads.
+- [x] Read `src/app/dashboard/residents/page.tsx` to understand current resident data handling.
+- [x] Modified `src/app/dashboard/residents/page.tsx` to fetch residents from Supabase using `getResidents()` and removed mock data.
+- [x] Fix duplicate identifier errors in `src/app/dashboard/residents/page.tsx`.
+- [x] Update `.env` file with Supabase connection details.
+- [x] Fix import errors in dashboard-related files (e.g., `src/app/dashboard/page.tsx`, `src/components/ai-assistant.tsx`, `src/components/dashboard-header.tsx`).

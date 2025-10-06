@@ -11,6 +11,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getFeedbacks } from '@/lib/data';
 
 const SuggestFeedbackSolutionInputSchema = z.object({
   feedbackContent: z.string().describe('The content of the feedback to be resolved.'),

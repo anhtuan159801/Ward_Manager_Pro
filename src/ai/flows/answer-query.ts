@@ -9,7 +9,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { mockResidents, mockEvents, mockFeedbacks } from '@/lib/data';
+import { getResidents, getEvents, getFeedbacks } from '@/lib/data';
 
 // Define tools for the AI to use
 const getResidentsTool = ai.defineTool(
@@ -19,7 +19,7 @@ const getResidentsTool = ai.defineTool(
     outputSchema: z.any(),
   },
   async () => {
-    return mockResidents;
+    return await getResidents();
   }
 );
 
@@ -30,7 +30,7 @@ const getEventsTool = ai.defineTool(
     outputSchema: z.any(),
   },
   async () => {
-    return mockEvents;
+    return await getEvents();
   }
 );
 
@@ -41,7 +41,7 @@ const getFeedbackTool = ai.defineTool(
     outputSchema: z.any(),
   },
   async () => {
-    return mockFeedbacks;
+    return await getFeedbacks();
   }
 );
 

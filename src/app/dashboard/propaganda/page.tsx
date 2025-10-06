@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Megaphone, Loader2, Copy, WandSparkles } from 'lucide-react';
 import { generatePropagandaAction } from '@/actions/propaganda';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
+import { cn, copyToClipboard } from '@/lib/utils';
 
 const formSchema = z.object({
   topic: z.string().min(5, { message: 'Chủ đề phải có ít nhất 5 ký tự.' }),
@@ -58,14 +58,14 @@ export default function AiPropagandaPage() {
     setIsLoading(false);
   }
 
-  const handleCopy = () => {
-    if (generatedMessage) {
-      navigator.clipboard.writeText(generatedMessage);
-      toast({
-        title: 'Thành công',
-        description: 'Đã sao chép nội dung vào clipboard.',
-      });
-    }
+  const handleCopy = async () => {
+    if (!generatedMessage) return;
+    const ok = await copyToClipboard(generatedMessage);
+    toast({
+      variant: ok ? 'default' : 'destructive',
+      title: ok ? 'Thành công' : 'Lỗi',
+      description: ok ? 'Đã sao chép nội dung vào clipboard.' : 'Trình duyệt không cho phép sao chép tự động.',
+    });
   };
 
   return (
